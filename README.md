@@ -1,6 +1,15 @@
 # person_search_gcn
 
-How to use?
+# Environment:
+python(3.6)
+pytorch(0.4.1)
+numpy(1.14.1)
+matplotlib(3.0.2)
+tqdm
+pickle
+
+
+# How to use?
 
 1 git clone https://github.com/sjtuzq/person_search_gcn.git
 
