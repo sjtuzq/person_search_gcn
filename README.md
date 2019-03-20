@@ -2,10 +2,15 @@
 
 # Environment:
 python(3.6)
+
 pytorch(0.4.1)
+
 numpy(1.14.1)
+
 matplotlib(3.0.2)
+
 tqdm
+
 pickle
 
 
