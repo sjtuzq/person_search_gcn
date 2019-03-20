@@ -20,7 +20,7 @@ pickle
 
 2 modify data_path, log_path and neighbor_num in config.py
 
-3 download dataset here(https://drive.google.com/open?id=1-pjZd-bZFTqV2F_34jr0q77-iEmjE4P5),then put it into data_path folder
+3 download dataset here(https://drive.google.com/open?id=1-pjZd-bZFTqV2F_34jr0q77-iEmjE4P5) ,then put it into data_path folder
 
 4 python prepare.py
 
