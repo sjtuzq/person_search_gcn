@@ -1,6 +1,6 @@
 # Person Search GCN Project
 
-This repository hosts the code for our paper [Learning Context Graph for Person Search]. The code is modified from the py-faster-rcnn written by Ross Girshick.
+This repository hosts the code for our paper [Learning Context Graph for Person Search], CVPR2019 Oral. Since any technique used for re-id model can be embodied in our model such as part-based attention, we remove them when release our code. Besides, the part of person detectin is modified from the py-faster-rcnn written by Ross Girshick and not included in this code. This repository shows how we can use graph convolution model to improve person search performance.
 
 
 ## Environment:
@@ -22,7 +22,7 @@ pickle
 
 2. modify data_path, log_path and neighbor_num in config.py
 
-3. download dataset here(https://drive.google.com/open?id=1-pjZd-bZFTqV2F_34jr0q77-iEmjE4P5),then put it into data_path folder.The dataset are generate by the paper Joint Detection and Identification Feature Learning for Person Search
+3. download dataset [here](https://drive.google.com/open?id=1-pjZd-bZFTqV2F_34jr0q77-iEmjE4P5),then put it into data_path folder. The dataset are generate by the paper [Joint Detection and Identification Feature Learning for Person Search](https://arxiv.org/abs/1604.01850), whose code can be found [here](https://github.com/ShuangLI59/person\_search).
 
 4. prepare dataset 
   generate the raw data feature into the paired form: persons in the same images are grouped together.
@@ -37,8 +37,8 @@ pickle
   ```Shell
   python train_gcn1.py
   ```
+An example output:
 
-	An example output:
     ```Shell
 	test_eval0:0.7766  eval:0.7769  now_best:0.7769
     ```
@@ -50,7 +50,8 @@ pickle
   python train_gcn2.py
   ```
   
-	An example output:
+An example output:
+
     ```Shell
 	epoch:0  acc:0.8410   map:0.8401
     ```
