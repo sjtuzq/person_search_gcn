@@ -183,9 +183,7 @@ def getTestdata(det_thresh=0.5,neibor=4,is_gt=False):
     gallery_feat = unpickle(base + '/gallery_features.pkl')['feat']
     probe_feat = unpickle(base + '/probe_features.pkl')['feat']
     fname = 'TestG{}'.format(100)
-
-    protoc = loadmat(osp.join(_root_dir, 'annotation/test/train_test',
-                              fname + '.mat'))[fname].squeeze()
+    protoc = loadmat(osp.join(data_root,'predata/{}.mat'.format(fname)))[fname].squeeze()
 
     name_to_det_feat = {}
     for name, det, feat in zip(_image_index,
