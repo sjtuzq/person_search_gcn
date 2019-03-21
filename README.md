@@ -4,11 +4,11 @@ This repository hosts the code for our paper [Learning Context Graph for Person 
 
 
 ## Environment:
-python(3.6)
-pytorch(0.4.1)
-numpy(1.14.1)
-matplotlib(3.0.2)
-tqdm
+python(3.6),
+pytorch(0.4.1),
+numpy(1.14.1), 
+matplotlib(3.0.2),
+tqdm,
 pickle
 
 
