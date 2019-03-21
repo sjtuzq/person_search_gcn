@@ -39,9 +39,9 @@ pickle
   ```
 An example output:
 
-    ```Shell
-	test_eval0:0.7766  eval:0.7769  now_best:0.7769
-    ```
+  ```Shell
+  test_eval0:0.7766  eval:0.7769  now_best:0.7769
+  ```
 
 6. train and test the gcn model
  train and test graph convolution model to do person re-id: using the pretrained model and use one attention model to select the companies to refine the feature.
@@ -52,6 +52,6 @@ An example output:
   
 An example output:
 
-    ```Shell
-	epoch:0  acc:0.8410   map:0.8401
-    ```
+  ```Shell
+  epoch:0  acc:0.8410   map:0.8401
+  ```
