@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from model import GcnModel_n
 from utils import Eval_det
-from utils import gallery_abc,gallery_gcn,gallery_gcn_det,_compute_iou
+from utils import gallery_abc,gallery_gcn,gallery_gcn_det,_compute_iou,Eval
 from data import Traindata,getTestdata
 
 from config import log_root,data_root,neighbor_num
@@ -53,10 +53,6 @@ def test_one_epoch(epoch,dataset,model,logdir,best,N=4):
         probe, label, gallery_feat = item
         probe = probe.squeeze()
 
-        abc_data = gallery_abc(probe, gallery_feat,num=num)
-        pred0 = abc_data[:, 0]
-        pred0 = np.argsort(-pred0)
-
         gcn_data,det = gallery_gcn_det(probe, gallery_feat,num=N)
         galdet,gt = det_all[i]
         det_info,det = [],det[0]
@@ -79,40 +75,36 @@ def test_one_epoch(epoch,dataset,model,logdir,best,N=4):
         pred = np.argsort(-pred)
 
         all_pred.append(pred)
-        all_pred0.append(pred0)
         all_label.append(label)
-        all_det.append(det_info)
 
     all_pred = np.asarray(all_pred)
-    all_pred0 = np.asarray(all_pred0)
     all_label = np.asarray(all_label)
-    all_det = np.asarray(all_det)
-    eval = Eval_det(all_label, all_pred,all_det,num=num)
-    eval0 = Eval_det(all_label, all_pred0, all_det,num=num)
 
-    if eval[0]>best:
+    eval, map = Eval(all_label, all_pred)
+    print('epoch:{}  acc:{:.4f}   map:{:.4f}'.format(epoch, eval[0], map))
+
+    if eval[0] > best:
         best = eval[0]
-    print('test_eval0:{:.4f}  eval:{:.4f}  now_best:{:.4f}'.format(eval0[0], eval[0], best))
 
     if not os.path.exists(logdir):
         os.mkdir(logdir)
-    np.save(os.path.join(logdir,'log_{}'.format(epoch)),eval)
+    np.save(os.path.join(logdir, 'log_{}'.format(epoch)), eval)
     logfile = os.path.join(logdir, 'log_gcnnet{}.txt'.format(epoch))
     writer = open(logfile, 'w')
-    writer.write("company number:  "+str(N))
-    writer.write("gallery size:    "+str(num))
+    writer.write("company number:  " + str(N))
     writer.write('\n')
     ids = [1, 2, 3, 4, 5, 10, 20]
     for id in ids:
-        writer.write('top_{}  before:{:.4f}    after:{:.4f}\n'.format(id, eval0[id - 1], eval[id - 1]))
+        writer.write('top_{}   acc:{:.4f}\n'.format(id, eval[id - 1]))
     writer.close()
 
     logpic = os.path.join(logdir, 'picgcnnet{}.jpg'.format(epoch))
-    plt.plot(eval0, 'r')
     plt.plot(eval, 'b')
     plt.savefig(logpic)
     plt.cla()
+
     return best
+
 
 def main(learning_rate=0.1,margin=0.6,N=4):
     model = GcnModel_n(neibor=N).cuda()
