@@ -33,9 +33,9 @@ pickle
 
 ## Experiments
 
-1. train and test the gcn model without attention model
+1. train and test the gcn model
 
-  pretrain graph convolution model: with the pair selected by distance.
+  train graph convolution model: with the pair selected by distance.
 
   ```Shell
   python train_gcn1.py
@@ -44,18 +44,4 @@ pickle
 
   ```Shell
   epoch:0  acc:0.8269   map:0.8323
-  ```
-
-2. train and test the gcn model with attention model
-
- train and test graph convolution model to do person re-id: using the pretrained model and use one attention model to select the companies to refine the feature.
-
-  ```Shell
-  python train_gcn2.py
-  ```
-  
-  An example output:
-
-  ```Shell
-  epoch:0  acc:0.8210   map:0.8279
   ```
