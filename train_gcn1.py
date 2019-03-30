@@ -124,12 +124,12 @@ def main(learning_rate=0.1,margin=0.6,N=4):
         os.mkdir(collect_path)
 
     best = 0
-    for epoch in range(200):
-        if epoch==20:
+    for epoch in range(20):
+        if epoch==10:
             learning_rate = learning_rate / 2
             optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad,
                                    model.parameters()), lr=learning_rate)
-        if epoch==40:
+        if epoch==15:
             learning_rate = learning_rate / 2
             optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad,
                                    model.parameters()), lr=learning_rate)
