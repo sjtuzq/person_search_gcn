@@ -1,6 +1,7 @@
 # Person Search GCN Project
+This project implements Context Graph of paper [Learning Context Graph for Person Search](https://arxiv.org/abs/1904.01830) (CVPR 2019 Oral). 
 
-This repository hosts the code for our paper [Learning Context Graph for Person Search], CVPR2019 Oral. Since any technique used for re-id model can be embodied in our model, such as part-based attention, we remove them when release our code. Besides, the part for person detectin is modified from the py-faster-rcnn written by Ross Girshick and not included in this code. This repository shows how we can use graph convolution model to utilize context information and improve person search performance.
+This repository shows how we can use graph convolution model to employ context information and improve person search performance. 
 
 
 ## Environment:
