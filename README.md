@@ -1,8 +1,7 @@
 # Person Search GCN Project
-This project implements Context Graph of paper [Learning Context Graph for Person Search](https://arxiv.org/abs/1904.01830) (CVPR 2019 Oral). 
+This project implements Context Graph of paper [Learning Context Graph for Person Search](https://arxiv.org/abs/1904.01830) (CVPR 2019 Oral). We are updating and will release more detailed code soon.
 
 This repository shows how we can use graph convolution model to employ context information and improve person search performance. 
-
 
 ## Environment:
 python(3.6),
