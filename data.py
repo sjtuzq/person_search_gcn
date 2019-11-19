@@ -126,7 +126,41 @@ class Traindata(Data.Dataset):
             print("error")
         return label,gallery
 
+    def getGalleryRandom(self,probe, randIdx):
+        slice = random.sample(self.sample,100)
+        label = [0]*100
+        gallery = []
+        idx = list(range(len(probe)))
+        idx.remove(randIdx)
+        for i in range(100):
+            tmp = self.feat[slice[i]]
+            gallery.append(tmp)
+        if len(probe)==1:
+            return label,gallery
+        for i, ix in enumerate(idx):
+            item = probe[ix]
+            if item[0] in slice:
+                id = slice.index(item[0])
+                tmp = random.sample(self.sample,1)[0]
+                gallery[id] = self.feat[tmp]
+            gallery[i] = self.feat[item[0]]
+            label[i] = 1
+        if not sum(label) == sum(label[:sum(label)]):
+            print("error")
+        return label,gallery
+
     def __getitem__(self, id):
+        id = self.keys[id]
+        randIdx = random.randint(0, len(self.data[id])-1)
+        item = self.data[id][randIdx]
+        det = self.det[item[0]]
+        feat = self.feat[item[0]]
+        roi = item[1]
+        feat1, featn = select_p_n(det, feat, roi, num=self.neibor)
+        label, gallery_all = self.getGalleryRandom(self.data[id], randIdx)
+        return feat1, featn, np.asarray(label), np.asarray(gallery_all)
+        
+        '''
         id = self.keys[id]
         item = self.data[id][0]
         det = self.det[item[0]]
@@ -135,11 +169,12 @@ class Traindata(Data.Dataset):
         feat1,featn = select_p_n(det,feat,roi,num=self.neibor)
         label,gallery_all = self.getGallery(self.data[id])
         return feat1,featn,np.asarray(label),np.asarray(gallery_all)
+        '''
 
     def __len__(self):
         return len(self.data)
 
 def getTestdata(neibor=4):
     testFile = os.path.join(data_root,'testdata/testdata_featn_{}.npy'.format(neibor))
-    testData = np.load(testFile,encoding='latin1')
+    testData = np.load(testFile,encoding='latin1',allow_pickle = True)
     return testData

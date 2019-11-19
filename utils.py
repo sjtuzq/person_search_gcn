@@ -8,6 +8,7 @@ import pickle
 import math
 import numpy as np
 import numpy.linalg as linagy
+from sklearn.metrics import average_precision_score
 
 def readpkl(file):
     fr = open(file,'rb')
@@ -148,29 +149,22 @@ def select_p_n(det,feat_p,roi,num=4):
     return feat1,np.asarray(featn)
 
 
-def Eval(label,pred,num=100):
+def Eval(label,pred, topk):
     # acc metric
-    correct = np.zeros([pred.shape[0],num+1])
-    correct0 = np.zeros(num+1)
-    for i in range(label.shape[0]):
-        for j in range(1,num+1):
-            if min(pred[i][0:j])<=sum(label[i]):
-                correct[i][j] += 1
-    for j in range(1,num+1):
-        correct0[j] = float(correct[:,j].sum())/label.shape[0]
+    #topk = [1, 2, 3, 4, 5, 10]
 
-    # map metric
-    map,probe_num = 0,pred.shape[0]
-    for i in range(probe_num):
-        ap, num = 0, sum(label[i])
-        id = np.where(pred[i] < num)[0] + 1
-        for j, item in enumerate(id):
-            ap += (j + 1) / item
-        ap /= id.shape[0]
-        map += ap
-    map /= probe_num
+    y_score = np.asarray(pred)
+    y_true = np.asarray(label)
 
-    return correct0[1:],map
+    ap = 0 if sum(y_true) == 0 else \
+        average_precision_score(y_true, y_score)
+
+    inds = np.argsort(y_score)[::-1]
+    y_score = y_score[inds]
+    y_true = y_true[inds]
+    acc = [min(1, sum(y_true[:k])) for k in topk]
+
+    return ap, acc
 
 def Eval_det(label,pred,det,num=100):
     correct = np.zeros([pred.shape[0],num+1])
@@ -206,89 +200,12 @@ def Sim1(feat1,feat2):
     sim = feat1.dot(feat2)/(linagy.norm(feat1)*linagy.norm(feat2))
     return sim
 
-def gallery_abc(probe,gallery_feat,num=100):
-    if len(gallery_feat) == 99:
-        gallery_feat.append(gallery_feat[-1])
-    gallery_feat = gallery_feat[:num]
-    index1 = []
-    idsave1 = []
-    featuresave1 = []
-    for item in gallery_feat:
-        sim0 = -1
-        nowid = 0
-        nowfeature = item[0]
-        for id,person in enumerate(item):
-            sim = Sim1(probe[0],person)
-            if sim>sim0:
-                sim0 = sim
-                nowid = id
-                nowfeature = person
-        index1.append(sim0)
-        idsave1.append(nowid)
-        featuresave1.append(nowfeature)
-    index0 = np.asarray(index1)
-    index0 = np.argsort(-index0)
-
-    index2 = []
-    idsave2 = []
-    featuresave2 = []
-    for item in gallery_feat:
-        sim0 = -1
-        nowid = 0
-        nowfeature = item[0]
-        for id,person in enumerate(item):
-            if id==idsave1[id]:
-                continue
-            sim = Sim1(probe[1],person)
-            # sim = np.random.rand(1)[0]
-            if sim>sim0:
-                sim0 = sim
-                nowid = id
-                nowfeature = person
-        index2.append(sim0)
-        idsave2.append(nowid)
-        featuresave2.append(nowfeature)
-
-    index3 = []
-    idsave3 = []
-    featuresave3 = []
-    for item in gallery_feat:
-        sim0 = -1
-        nowid = 0
-        nowfeature = item[0]
-        for id,person in enumerate(item):
-            if id == idsave1[id]:
-                continue
-            if id == idsave2[id]:
-                continue
-            sim = Sim1(probe[2],person)
-            # sim = np.random.rand(1)[0]
-            if sim>sim0:
-                sim0 = sim
-                nowid = id
-                nowfeature = person
-        index3.append(sim0)
-        idsave3.append(nowid)
-        featuresave3.append(nowfeature)
-
-    abc_data = []
-    for i in range(len(index1)):
-        a = index1[i]
-        b = index2[i]
-        c = index3[i]
-        abc_data.append(np.asarray([a,b,c]))
-    abc_data = np.asarray(abc_data)
-
-    return np.asarray(abc_data)
-
 def gallery_gcn_det(probe,gallery_feat,num=3):
-    if len(gallery_feat) == 99:
-        gallery_feat.append(gallery_feat[-1])
-
     detsave = [[],[],[],[],[],[],[],[],[],[]]
     featuresave = [[],[],[],[],[],[],[],[],[],[]]
-    for i in range(num):
-        for j,item in enumerate(gallery_feat):
+
+    for j,item in enumerate(gallery_feat):
+        for i in range(num):
             sim0 = -1
             id0 = 0
             try:
@@ -301,24 +218,30 @@ def gallery_gcn_det(probe,gallery_feat,num=3):
                     sim0 = sim
                     id0 =id
                     nowfeature = person
-            detsave[i].append(id0)
-            featuresave[i].append(nowfeature)
+            for id, person in enumerate(item):
+                if i == 0:
+                    featuresave[i].append(person)
+                else:
+                    featuresave[i].append(nowfeature)
+            #detsave[i].append(id0)
+            #featuresave[i].append(nowfeature)
 
     abc_data = []
+    count = 0
     for i in range(len(gallery_feat)):
-        feature = []
-        for j in range(num):
-            try:
-                feature.append(featuresave[j][i])
-            except:
-                break
-        else:
-            abc_data.append(np.asarray(feature))
+        for k in range(gallery_feat[i].shape[0]):
+            feature = []
+            for j in range(num):
+                try:
+                    feature.append(featuresave[j][count])
+                except:
+                    break
+            else:
+                abc_data.append(np.asarray(feature))
+                count += 1
 
-    if len(abc_data)==99:
-        abc_data.append(abc_data[-1])
     abc_data = np.asarray(abc_data)
-    return abc_data,detsave
+    return abc_data
 
 def gallery_gcn(probe,gallery_feat,num=3):
     if len(gallery_feat) == 99:
